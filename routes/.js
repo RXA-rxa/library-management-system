@@ -1,0 +1,6 @@
+New-Item -Path "routes\auth.js" -ItemType File -Value "const express = require('express');`r`nconst router = express.Router();`r`nmodule.exports = router;"
+New-Item -Path "routes\books.js" -ItemType File -Value "const express = require('express');`r`nconst router = express.Router();`r`nmodule.exports = router;"
+New-Item -Path "routes\interact.js" -ItemType File -Value "const express = require('express');`r`nconst router = express.Router();`r`nmodule.exports = router;"
+New-Item -Path "routes\borrow.js" -ItemType File -Value "const express = require('express');`r`nconst router = express.Router();`r`nmodule.exports = router;"
+New-Item -Path "routes\user.js" -ItemType File -Value "const express = require('express');`r`nconst router = express.Router();`r`nmodule.exports = router;"
+New-Item -Path "routes\admin.js" -ItemType File -Value "const express = require('express');`r`nconst router = express.Router();`r`nmodule.exports = router;"

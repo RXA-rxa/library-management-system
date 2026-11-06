@@ -1,0 +1,121 @@
+<!-- 模仿截图中的检索区域 -->
+<div class="search-container">
+    <div class="search-box">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-2">
+                <label class="form-label text-muted small">超星发现</label>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label text-muted small">资源地图</label>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label text-muted small">CASHL检索</label>
+            </div>
+            <div class="col-md-6">
+                <!-- 馆藏书目检索 -->
+                <div class="card shadow-sm p-3">
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        <span class="fw-bold">馆藏书目检索</span>
+                        <select class="form-select form-select-sm" style="width:100px;" id="searchType">
+                            <option value="title">题名</option>
+                            <option value="author">作者</option>
+                            <option value="keyword">关键词</option>
+                        </select>
+                        <input type="text" class="form-control form-control-sm flex-grow-1" id="searchKeyword" placeholder="输入搜索词..." value="<%= keyword || '' %>">
+                        <button class="btn btn-primary btn-sm" id="searchBtn"><i class="fas fa-search"></i> 搜索</button>
+                    </div>
+                    <div class="mt-2 text-end">
+                        <a href="#" class="text-decoration-none small">您也可以直接点击进入中南财经政法大学书目检索平台</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 统计卡片（美化） -->
+<div class="row g-3 my-4">
+    <div class="col-md-4">
+        <div class="card text-center p-3">
+            <h3 class="display-6 fw-bold"><%= totalBooks %></h3>
+            <p class="text-muted"><i class="fas fa-book"></i> 总藏书</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center p-3">
+            <h3 class="display-6 fw-bold"><%= borrowingCount %></h3>
+            <p class="text-muted"><i class="fas fa-hand-holding"></i> 借阅中</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center p-3">
+            <h3 class="display-6 fw-bold"><%= commentCount %></h3>
+            <p class="text-muted"><i class="fas fa-comment"></i> 评论数</p>
+        </div>
+    </div>
+</div>
+
+<!-- 图书列表 -->
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    <% if (books && books.length > 0) { %>
+        <% books.forEach(book => { %>
+            <div class="col">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="card-title"><%= book.title %></h5>
+                            <span class="badge bg-primary"><%= book.category || '未分类' %></span>
+                        </div>
+                        <h6 class="card-subtitle mb-2 text-muted"><i class="fas fa-user"></i> <%= book.author || '未知作者' %></h6>
+                        <p class="card-text flex-grow-1"><%= book.description ? book.description.substring(0, 80) + '...' : '' %></p>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span><i class="fas fa-tag"></i> ¥<%= book.price %></span>
+                            <span><i class="fas fa-box"></i> 库存 <%= book.stock %></span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span><i class="fas fa-thumbs-up"></i> <%= book.like_count || 0 %></span>
+                            <span><i class="fas fa-heart"></i> <%= book.fav_count || 0 %></span>
+                        </div>
+                        <div class="d-flex flex-wrap gap-1 mt-auto">
+                            <button class="btn btn-outline-primary btn-sm like-btn" data-id="<%= book.id %>"><i class="fas fa-thumbs-up"></i> 点赞</button>
+                            <button class="btn btn-outline-danger btn-sm fav-btn" data-id="<%= book.id %>"><i class="fas fa-heart"></i> 收藏</button>
+                            <button class="btn btn-outline-info btn-sm comment-btn" data-id="<%= book.id %>"><i class="fas fa-comment"></i> 评论</button>
+                            <button class="btn btn-outline-success btn-sm borrow-btn" data-id="<%= book.id %>"><i class="fas fa-hand-holding"></i> 借阅</button>
+                            <a href="/books/<%= book.id %>" class="btn btn-outline-secondary btn-sm"><i class="fas fa-info-circle"></i> 详情</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    <% } else { %>
+        <div class="col-12 text-center py-5">
+            <i class="fas fa-book-open fa-4x text-muted mb-3"></i>
+            <p class="text-muted">暂无图书，请管理员添加</p>
+        </div>
+    <% } %>
+</div>
+
+<!-- 分页 -->
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        <% if (currentPage > 1) { %>
+            <li class="page-item"><a class="page-link" href="?page=<%= currentPage-1 %>&keyword=<%= keyword || '' %>&category=<%= category || '' %>">上一页</a></li>
+        <% } %>
+        <% for (let i = 1; i <= totalPages; i++) { %>
+            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                <a class="page-link" href="?page=<%= i %>&keyword=<%= keyword || '' %>&category=<%= category || '' %>"><%= i %></a>
+            </li>
+        <% } %>
+        <% if (currentPage < totalPages) { %>
+            <li class="page-item"><a class="page-link" href="?page=<%= currentPage+1 %>&keyword=<%= keyword || '' %>&category=<%= category || '' %>">下一页</a></li>
+        <% } %>
+    </ul>
+</nav>
+
+<!-- 搜索功能绑定（与现有JS兼容） -->
+<script>
+    document.getElementById('searchBtn')?.addEventListener('click', function() {
+        const keyword = document.getElementById('searchKeyword').value;
+        window.location.href = '/books?keyword=' + encodeURIComponent(keyword);
+    });
+</script>

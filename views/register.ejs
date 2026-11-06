@@ -1,0 +1,39 @@
+
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0"><i class="fas fa-user-plus"></i> 用户注册</h4>
+            </div>
+            <div class="card-body">
+                <form action="/auth/register" method="post">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">用户名</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">密码</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="realname" class="form-label">真实姓名</label>
+                        <input type="text" class="form-control" id="realname" name="realname">
+                    </div>
+                    <div class="mb-3">
+                        <label for="type" class="form-label">用户类型</label>
+                        <select class="form-select" id="type" name="type">
+                            <option value="STUDENT">学生</option>
+                            <option value="TEACHER">老师</option>
+                            <option value="GUEST">外来用户</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">注册</button>
+                </form>
+                <div class="mt-3 text-center">
+                    <a href="/auth/login">已有账号？去登录</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

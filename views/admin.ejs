@@ -1,0 +1,170 @@
+<h2><i class="fas fa-shield-alt"></i> 管理后台</h2>
+<ul class="nav nav-tabs mt-3" id="adminTab" role="tablist">
+    <li class="nav-item"><a class="nav-link <%= section === 'books' ? 'active' : '' %>" href="/admin/books">📚 图书管理</a></li>
+    <li class="nav-item"><a class="nav-link <%= section === 'users' ? 'active' : '' %>" href="/admin/users">👥 用户管理</a></li>
+    <li class="nav-item"><a class="nav-link <%= section === 'borrows' ? 'active' : '' %>" href="/admin/borrow-stats">📖 借阅统计</a></li>
+    <li class="nav-item"><a class="nav-link <%= section === 'comments' ? 'active' : '' %>" href="/admin/comments">💬 评论管理</a></li>
+    <li class="nav-item"><a class="nav-link <%= section === 'payments' ? 'active' : '' %>" href="/admin/payments">💳 收款码管理</a></li>
+</ul>
+
+<div class="mt-3">
+    <% if (section === 'books') { %>
+        <div class="d-flex justify-content-between mb-2">
+            <span>共 <%= booksTotal %> 本</span>
+            <button class="btn btn-primary btn-sm" onclick="addBook()"><i class="fas fa-plus"></i> 添加图书</button>
+        </div>
+        <table class="table table-striped">
+            <thead><tr><th>ID</th><th>书名</th><th>作者</th><th>分类</th><th>价格</th><th>库存</th><th>操作</th></tr></thead>
+            <tbody>
+                <% books.forEach(b => { %>
+                    <tr>
+                        <td><%= b.id %></td>
+                        <td><%= b.title %></td>
+                        <td><%= b.author || '-' %></td>
+                        <td><%= b.category || '-' %></td>
+                        <td>¥<%= b.price %></td>
+                        <td><%= b.stock %></td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" onclick="editBook(<%= b.id %>)"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteBook(<%= b.id %>)"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } else if (section === 'users') { %>
+        <table class="table table-striped">
+            <thead><tr><th>ID</th><th>用户名</th><th>真实姓名</th><th>类型</th><th>角色</th><th>操作</th></tr></thead>
+            <tbody>
+                <% users.forEach(u => { %>
+                    <tr>
+                        <td><%= u.id %></td>
+                        <td><%= u.username %></td>
+                        <td><%= u.realname || '-' %></td>
+                        <td><%= u.type || 'STUDENT' %></td>
+                        <td><%= u.role || 'USER' %></td>
+                        <td>
+                            <button class="btn btn-sm btn-danger" onclick="deleteUser(<%= u.id %>)"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } else if (section === 'borrows') { %>
+        <div class="row g-2 mb-3">
+            <div class="col-md-3"><div class="card"><div class="card-body"><h5>总借阅</h5><h3><%= borrowStats.totalBorrows || 0 %></h3></div></div></div>
+            <div class="col-md-3"><div class="card"><div class="card-body"><h5>借阅中</h5><h3><%= borrowStats.borrowing || 0 %></h3></div></div></div>
+            <div class="col-md-3"><div class="card"><div class="card-body"><h5>逾期</h5><h3><%= borrowStats.overdue || 0 %></h3></div></div></div>
+            <div class="col-md-3"><div class="card"><div class="card-body"><h5>已归还</h5><h3><%= borrowStats.returned || 0 %></h3></div></div></div>
+        </div>
+        <h5>近期借阅记录</h5>
+        <table class="table table-striped">
+            <thead><tr><th>图书</th><th>用户</th><th>借出时间</th><th>应还时间</th><th>状态</th></tr></thead>
+            <tbody>
+                <% if (borrowStats.recentRecords && borrowStats.recentRecords.length > 0) { %>
+                    <% borrowStats.recentRecords.forEach(r => { %>
+                        <tr>
+                            <td><%= r.bookTitle %></td>
+                            <td><%= r.username %></td>
+                            <td><%= r.borrow_time %></td>
+                            <td><%= r.due_time %></td>
+                            <td><span class="badge <%= r.status === 'BORROWED' ? 'bg-danger' : r.status === 'RETURNED' ? 'bg-success' : 'bg-warning' %>"><%= r.status %></span></td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="5" class="text-center">暂无记录</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+    <% } else if (section === 'comments') { %>
+        <table class="table table-striped">
+            <thead><tr><th>图书</th><th>用户</th><th>内容</th><th>时间</th><th>操作</th></tr></thead>
+            <tbody>
+                <% comments.forEach(c => { %>
+                    <tr>
+                        <td><%= c.bookTitle %></td>
+                        <td><%= c.username %></td>
+                        <td><%= c.content %></td>
+                        <td><%= c.create_time %></td>
+                        <td><button class="btn btn-sm btn-danger" onclick="deleteComment(<%= c.id %>)"><i class="fas fa-trash"></i></button></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } else if (section === 'payments') { %>
+        <div class="d-flex justify-content-between mb-2">
+            <span>收款码列表</span>
+            <button class="btn btn-primary btn-sm" onclick="addPayment()"><i class="fas fa-plus"></i> 添加收款码</button>
+        </div>
+        <table class="table table-striped">
+            <thead><tr><th>ID</th><th>名称</th><th>描述</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody>
+                <% payments.forEach(p => { %>
+                    <tr>
+                        <td><%= p.id %></td>
+                        <td><%= p.name %></td>
+                        <td><%= p.description || '-' %></td>
+                        <td><span class="badge <%= p.status === 'ACTIVE' ? 'bg-success' : 'bg-secondary' %>"><%= p.status %></span></td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" onclick="editPayment(<%= p.id %>)"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-danger" onclick="deletePayment(<%= p.id %>)"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    <% } %>
+</div>
+
+<script>
+// 前端 AJAX 操作（带 Token）
+const token = '<%= user ? user.token : '' %>'; // 实际使用时应从 session 或 cookie 读取
+
+async function fetchAPI(url, method, body) {
+    const opts = {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+        }
+    };
+    if (body) opts.body = JSON.stringify(body);
+    const res = await fetch(url, opts);
+    return res.json();
+}
+
+function addBook() {
+    // 弹窗收集数据，略
+    alert('添加图书功能（请通过表单或模态框实现）');
+}
+
+function editBook(id) {
+    alert('编辑图书 ' + id);
+}
+
+async function deleteBook(id) {
+    if (!confirm('确认删除？')) return;
+    await fetchAPI('/admin/books/' + id, 'DELETE');
+    location.reload();
+}
+
+async function deleteUser(id) {
+    if (!confirm('确认删除该用户？')) return;
+    await fetchAPI('/admin/users/' + id, 'DELETE');
+    location.reload();
+}
+
+async function deleteComment(id) {
+    if (!confirm('确认删除该评论？')) return;
+    await fetchAPI('/admin/comments/' + id, 'DELETE');
+    location.reload();
+}
+
+function addPayment() { alert('添加收款码'); }
+function editPayment(id) { alert('编辑收款码 ' + id); }
+async function deletePayment(id) {
+    if (!confirm('确认删除？')) return;
+    await fetchAPI('/admin/payments/' + id, 'DELETE');
+    location.reload();
+}
+</script>

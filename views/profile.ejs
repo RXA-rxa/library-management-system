@@ -1,0 +1,72 @@
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="list-group">
+            <a href="/user/profile" class="list-group-item list-group-item-action <%= section === 'info' ? 'active' : '' %>">
+                <i class="fas fa-id-card"></i> 个人信息
+            </a>
+            <a href="/user/favorites" class="list-group-item list-group-item-action <%= section === 'favorites' ? 'active' : '' %>">
+                <i class="fas fa-heart"></i> 我的收藏
+            </a>
+            <a href="/user/likes" class="list-group-item list-group-item-action <%= section === 'likes' ? 'active' : '' %>">
+                <i class="fas fa-thumbs-up"></i> 我的点赞
+            </a>
+            <a href="/user/comments" class="list-group-item list-group-item-action <%= section === 'comments' ? 'active' : '' %>">
+                <i class="fas fa-comment"></i> 我的评论
+            </a>
+            <a href="/user/borrows" class="list-group-item list-group-item-action <%= section === 'borrows' ? 'active' : '' %>">
+                <i class="fas fa-book"></i> 借阅记录
+            </a>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <% if (section === 'info') { %><i class="fas fa-id-card"></i> 个人信息<% } %>
+                    <% if (section === 'favorites') { %><i class="fas fa-heart"></i> 我的收藏<% } %>
+                    <% if (section === 'likes') { %><i class="fas fa-thumbs-up"></i> 我的点赞<% } %>
+                    <% if (section === 'comments') { %><i class="fas fa-comment"></i> 我的评论<% } %>
+                    <% if (section === 'borrows') { %><i class="fas fa-book"></i> 借阅记录<% } %>
+                </h5>
+            </div>
+            <div class="card-body">
+                <% if (section === 'info') { %>
+                    <p><strong>用户名：</strong><%= user.username %></p>
+                    <p><strong>真实姓名：</strong><%= user.realname || '-' %></p>
+                    <p><strong>用户类型：</strong><%= user.type || 'STUDENT' %></p>
+                    <p><strong>角色：</strong><%= user.role || 'USER' %></p>
+                    <p><strong>邮箱：</strong><%= user.email || '-' %></p>
+                    <p><strong>电话：</strong><%= user.phone || '-' %></p>
+                <% } else { %>
+                    <% if (data && data.length > 0) { %>
+                        <ul class="list-group">
+                            <% data.forEach(item => { %>
+                                <li class="list-group-item">
+                                    <% if (section === 'favorites' || section === 'likes') { %>
+                                        <strong><%= item.title %></strong> — <%= item.author || '未知作者' %>
+                                    <% } else if (section === 'comments') { %>
+                                        <div><strong><%= item.bookTitle %></strong> <small class="text-muted"><%= item.create_time %></small></div>
+                                        <div><%= item.content %></div>
+                                    <% } else if (section === 'borrows') { %>
+                                        <div><strong><%= item.bookTitle %></strong>
+                                            <span class="badge <%= item.status === 'BORROWED' ? 'bg-danger' : item.status === 'RETURNED' ? 'bg-success' : 'bg-warning' %>">
+                                                <%= item.status %>
+                                            </span>
+                                        </div>
+                                        <div>借出：<%= item.borrow_time %> | 应还：<%= item.due_time %></div>
+                                        <% if (item.return_time) { %>
+                                            <div>归还：<%= item.return_time %></div>
+                                        <% } %>
+                                    <% } %>
+                                </li>
+                            <% }) %>
+                        </ul>
+                    <% } else { %>
+                        <p class="text-muted">暂无记录</p>
+                    <% } %>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
